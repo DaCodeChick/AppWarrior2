@@ -1,0 +1,17 @@
+#include "../include/UMath.hpp"
+#include "../include/UMemory.hpp"
+
+#include <cstring>
+#include <print>
+
+int main(int argc, char **argv)
+{
+	if (argc != 2) return -1;
+
+	std::println("UMemory::CRC:\t{:08X}",
+		UMemory::CRC(argv[1], strlen(argv[1]), 0xDEADBEEF));
+	std::println("UMath::Calculate:\t{:08X}",
+		UMath::Calculate(argv[1], strlen(argv[1]), UMath::CalcRandomSeed()));
+	
+	return 0;
+}
