@@ -3,9 +3,15 @@
 #include "GrafTypes.hpp"
 
 
-struct SFont
+struct SFontDesc
 {
 	uint32 signature;
+	uint8 offs0004[20];
+	uint8 nameLength;
+	char name[31];
+	uint8 offs0038[34];
+	uint8 authorLength;
+	char author[31];
 };
 
 
