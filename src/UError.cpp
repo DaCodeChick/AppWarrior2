@@ -24,7 +24,7 @@ uint32 UError::WinToGenError(DWORD inWinError)
 		case ERROR_ALREADY_EXISTS: return fsError_ItemAlreadyExists;
 		case ERROR_INVALID_NAME:
 		case ERROR_FILENAME_EXCED_RANGE:
-			return fsError_PathToLong;
+			return fsError_PathTooLong;
 		case WSAHOST_NOT_FOUND:
 		case WSATRY_AGAIN:
 		case WSANO_DATA:
@@ -52,7 +52,7 @@ uint32 UError::MacToGenError(OSErr inMacError)
 {
 	switch (inMacError)
 	{
-		case errFSNameTooLong: return fsError_PathToLong;
+		case errFSNameTooLong: return fsError_PathTooLong;
 		case kECONNABORTEDErr: return netError_ConnectionClosed;
 		case kENETDOWNErr:
 		case kEHOSTUNREACHErr:
@@ -60,5 +60,12 @@ uint32 UError::MacToGenError(OSErr inMacError)
 		default: return error_Unknown;
 	}
 }
-#else // _WIN32
+#else
+uint32 UError::StdToGenError(int inError)
+{
+	switch (inError)
+	{
+		default: return error_Unknown;
+	}
+}
 #endif // _WIN32

@@ -13,10 +13,10 @@ class HXAPI UError
 public:
 #ifdef _MACINTOSH
 	static uint32 MacToGenError(OSErr inMacError);
-#endif // _MACINTOSH
-#ifdef _WIN32
+#elif defined(_WIN32)
 	static uint32 WinToGenError(DWORD inWinError);
-#endif // _WIN32
+#else
+	static uint32 StdToGenError(int inError);
 };
 
 
