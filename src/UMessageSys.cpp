@@ -2,7 +2,6 @@
 #include "../include/UMessageSys.hpp"
 
 static bool _gEnabled = false;
-static CVoidPtrList _gMessageQueue;
 
 #ifdef _WIN32
 static CRITICAL_SECTION _gMutex;

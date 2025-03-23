@@ -19,6 +19,16 @@ int pstrcat(unsigned char *dst, const unsigned char *src)
 }
 
 
+unsigned char * pstrchr(const unsigned char *str, int c)
+{
+#ifdef _MACINTOSH
+	return (unsigned char *)PLstrchr(str, (short)c);
+#else
+	return (unsigned char *)strchr((const char *)&str[1], c);
+#endif
+}
+
+
 int pstrcmp(const unsigned char *str1, const unsigned char *str2)
 {
 #ifdef _MACINTOSH

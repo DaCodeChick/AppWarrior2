@@ -18,6 +18,13 @@ extern "C"
 	 */
 	HXAPI int pstrcmp(const unsigned char *str1, const unsigned char *str2);
 
+	/** @brief Finds the first occurence of a character in a Pascal string
+	 *	@param str The source string
+	 *	@param c The character to find
+	 * 	@return Pointer to the character or NULL if absent
+	 */
+	HXAPI unsigned char * pstrchr(const unsigned char *str, int c);
+
 	/** @brief Copies a Pascal string to a given buffer
 	 *  @param dst The destination buffer
 	 * 	@param src The source string
@@ -34,6 +41,8 @@ extern "C"
 	HXAPI int pstrncpy(unsigned char *dst, const unsigned char *src, int len);
 
 	/** @brief Finds the last occurence of a character in a Pascal string
+	 *	@param str The source string
+	 *	@param c The character to find
 	 * 	@return Pointer to the character or NULL if absent
 	 */
 	HXAPI unsigned char * pstrrchr(const unsigned char *str, int c);
