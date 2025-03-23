@@ -18,7 +18,6 @@ public:
 	static fast_float ArcTangent(fast_float x);
 	static fast_float Cosine(fast_float x);
 	static fast_float NormalizeAngle(fast_float x);
-	static fast_float Pi();
 	static fast_float Sine(fast_float x);
 	static fast_float SquareRoot(fast_float x);
 };

@@ -86,12 +86,6 @@ fast_float UMath::NormalizeAngle(fast_float x)
 }
 
 
-fast_float UMath::Pi()
-{
-	return gm_Pi;
-}
-
-
 fast_float UMath::Sine(fast_float x)
 {
 	return sin(UMath::NormalizeAngle(sin(x)));
