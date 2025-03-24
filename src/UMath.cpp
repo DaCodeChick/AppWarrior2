@@ -3,7 +3,7 @@
 #include "../include/UMath.hpp"
 #include "../include/UMemory.hpp"
 
-#include <math.h>
+#include <cmath>
 
 #ifndef _WIN32 && !defined(_MACINTOSH)
 #include <sys/time.h>

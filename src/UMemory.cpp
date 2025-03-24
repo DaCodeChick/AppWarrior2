@@ -1,19 +1,19 @@
 #include "../include/UError.hpp"
 #include "../include/UMemory.hpp"
 
-#include <string.h>
-
 #ifdef _MACINTOSH
 #include <MacMemory.h>
+#else
+#include <cstring>
 #endif // _MACINTOSH
 
 #ifndef _WIN32 || !defined(_MACINTOSH)
-#include <stdlib.h>
+#include <cstdlib>
 #endif // _WIN32
 
 
 static bool _gInitialized = false;
-static Size _gHandleCount = 0;
+static Size _gAllocCount = 0;
 
 #ifdef _WIN32
 static HANDLE _gHeap = NULL;
@@ -159,10 +159,11 @@ void UMemory::Dispose(THdl inHdl)
 {
 #ifdef _WIN32
 	if (inHdl) GlobalFree((HGLOBAL)inHdl);
+#elif defined(_MACINTOSH)
 #else
 	if (*inHdl) free(*inHdl);
 #endif // _WIN32
-	_gHandleCount--;
+	_gAllocCount--;
 }
 
 
@@ -171,13 +172,14 @@ void UMemory::Dispose(TPtr inPtr)
 #ifdef _WIN32
 	if (!_gInitialized && !inPtr) return;
 	HeapFree(_gHeap, 0, inPtr);
+#elif defined(_MACINTOSH)
 #else
 	if (inPtr) free(inPtr);
 #endif // _WIN32
 }
 
 
-void UMemory::Fill8(void *outDest, Size inSize, uint8 inByte)
+void UMemory::FillByte(void *outDest, Size inSize, uint8 inByte)
 {
 #ifdef _MACINTOSH
 #else
@@ -213,6 +215,7 @@ TPtr UMemory::New(Size inSize)
 	if (!inSize) ; // error_Param
 #ifdef _WIN32
 	HANDLE p = HeapAlloc(_gHeap, 0, inSize);
+#elif defined(_MACINTOSH)
 #else
 	void *p = malloc(inSize);
 #endif // _WIN32
@@ -226,6 +229,7 @@ TPtr UMemory::NewClear(Size inSize)
 	if (!inSize) ; // error_Param
 #ifdef _WIN32
 	HANDLE p = HeapAlloc(_gHeap, HEAP_ZERO_MEMORY, inSize);
+#elif defined(_MACINTOSH)
 #else
 	void *p = malloc(inSize);
 #endif // _WIN32
@@ -243,8 +247,10 @@ THdl UMemory::NewHandle(Size inSize)
 #ifdef _WIN32
 	HGLOBAL h = GlobalAlloc(GMEM_FIXED, inSize);
 	if (!h) ; // memoryError_NotEnough
+#elif defined(_MACINTOSH)
+#else
 #endif // _WIN32
-	_gHandleCount++;
+	_gAllocCount++;
 	return (THdl)h;
 }
 
@@ -254,8 +260,10 @@ THdl UMemory::NewHandleClear(Size inSize)
 	if (!inSize) ; // error_Param
 #ifdef _WIN32
 	HGLOBAL h = GlobalAlloc(GMEM_ZEROINIT, inSize);
+#elif defined(_MACINTOSH)
+#else
 #endif // _WIN32
 	if (!h) ; // memoryError_NotEnough
-	_gHandleCount++;
+	_gAllocCount++;
 	return (THdl)h;
 }
