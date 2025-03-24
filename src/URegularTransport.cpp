@@ -1,5 +1,5 @@
 #include "../include/UMessageSys.hpp"
-#include "../include/UNetwork.hpp"
+#include "../include/URegularTransport.hpp"
 #include "../include/UOperatingSystem.hpp"
 
 #ifdef _WIN32
@@ -9,11 +9,11 @@
 static bool _gInitialized = false;
 
 #ifdef _WIN32
-static ATOM _gNetClassAtom = 0;
+static ATOM _gTptClassAtom = 0;
 #endif
 
 
-void UNetwork::Deinit()
+void URegularTransport::Deinit()
 {
 	UMessageSys::Deinit();
 #ifdef _WIN32
@@ -22,7 +22,7 @@ void UNetwork::Deinit()
 }
 
 
-void UNetwork::Init()
+void URegularTransport::Init()
 {
 	if (_gInitialized) return;
 
@@ -32,7 +32,7 @@ void UNetwork::Init()
 	WSADATA wsaData;
 	WNDCLASSEXA wndClass;
 
-	if (!_gNetClassAtom)
+	if (!_gTptClassAtom)
 	{
 		wndClass.hInstance = UOperatingSystem::GetProgramInstance();
 		wndClass.cbSize = sizeof(WNDCLASSEXA);
@@ -47,7 +47,7 @@ void UNetwork::Init()
 		wndClass.lpszClassName = "%%stdwinsockclass%%";
 		wndClass.hIconSm = NULL;
 
-		_gNetClassAtom = RegisterClassExA(&wndClass);
+		_gTptClassAtom = RegisterClassExA(&wndClass);
 	}
 
 	WSAStartup(MAKEWORD(1, 1), &wsaData);

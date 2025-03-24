@@ -1,4 +1,3 @@
-#include "../include/UMath.hpp"
 #include "../include/UMemory.hpp"
 
 #include <cstring>
@@ -10,8 +9,8 @@ int main(int argc, char **argv)
 
 	std::println("UMemory::CRC:\t{:08X}",
 		UMemory::CRC(argv[1], strlen(argv[1]), 0xDEADBEEF));
-	std::println("UMath::Calculate:\t{:08X}",
-		UMath::Calculate(argv[1], strlen(argv[1]), UMath::CalcRandomSeed()));
+	std::println("UMemory::Checksum:\t{:08X}",
+		UMemory::Checksum(argv[1], strlen(argv[1]), 0xDEADBEEF));
 	
 	return 0;
 }

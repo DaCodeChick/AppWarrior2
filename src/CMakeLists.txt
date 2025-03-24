@@ -12,8 +12,8 @@ set (AW_SOURCES
 	UMemory.cpp
 	UMessageSys.cpp
 	UMouse.cpp
-	UNetwork.cpp
 	UOperatingSystem.cpp
+	URegularTransport.cpp
 	USound.cpp
 	UTimer.cpp
 	UUserInterface.cpp

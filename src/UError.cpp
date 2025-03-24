@@ -28,22 +28,22 @@ uint32 UError::WinToGenError(DWORD inWinError)
 		case WSAHOST_NOT_FOUND:
 		case WSATRY_AGAIN:
 		case WSANO_DATA:
-			return netError_BadAddress;
+			return tptError_BadAddress;
 		case WSAENOBUFS:
 		case WSAETOOMANYREFS:
-			return netError_BadData;
-		case WSAEADDRINUSE: return netError_AddressInUse;
-		case WSAECONNRESET: return netError_ConnectionReset;
-		case WSAECONNREFUSED: return netError_ConnectionRefused;
-		case WSAETIMEDOUT: return netError_ConnectionTimedOut;
+			return tptError_BadData;
+		case WSAEADDRINUSE: return tptError_AddressInUse;
+		case WSAECONNRESET: return tptError_ConnectionReset;
+		case WSAECONNREFUSED: return tptError_ConnectionRefused;
+		case WSAETIMEDOUT: return tptError_ConnectionTimedOut;
 		case WSAENETRESET:
 		case WSAECONNABORTED:
 		case WSAEHOSTDOWN:
-			return netError_ConnectionClosed;
+			return tptError_ConnectionClosed;
 		case WSAENETDOWN:
 		case WSAENETUNREACH:
 		case WSAEHOSTUNREACH:
-			return netError_HostUnreachable;
+			return tptError_HostUnreachable;
 		default: return error_Unknown;
 	}
 }
@@ -53,10 +53,10 @@ uint32 UError::MacToGenError(OSErr inMacError)
 	switch (inMacError)
 	{
 		case errFSNameTooLong: return fsError_PathTooLong;
-		case kECONNABORTEDErr: return netError_ConnectionClosed;
+		case kECONNABORTEDErr: return tptError_ConnectionClosed;
 		case kENETDOWNErr:
 		case kEHOSTUNREACHErr:
-			return netError_HostUnreachable;
+			return tptError_HostUnreachable;
 		default: return error_Unknown;
 	}
 }

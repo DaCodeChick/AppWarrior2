@@ -9,6 +9,7 @@ public:
 	void * RemoveItem();
 	void RemoveItem(void *ioData);
 protected:
-	void **mData, *mPrev, *mNext;
+	void *mHead, *mTail;
+	int mOffset;
 	uint32 mCount;
 };

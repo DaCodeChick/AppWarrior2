@@ -34,7 +34,7 @@ int pstrcmp(const unsigned char *str1, const unsigned char *str2)
 #ifdef _MACINTOSH
 	return PLstrcmp(str1, str2);
 #else
-	int minsize = min(str1[0], str2[0]);
+	if (str1[0] != str2[0]) return -1;
 	return strncmp((const char *)&str1[1], (const char *)&str2[1], minsize);
 #endif
 }

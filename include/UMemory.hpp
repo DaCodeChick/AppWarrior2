@@ -20,18 +20,19 @@ public:
 	static THdl NewHandle(const void *inData, Size inSize);
 	static THdl NewHandleClear(Size inSize);
 
+	static uint32 AdlerSum(const void *inData, Size inDataSize, uint32 inInit);
 	static uint32 Checksum(const void *inData, Size inDataSize, uint32 inInit);
 	static uint32 CRC(const void *inData, Size inDataSize, uint32 inInit);
 
 	static void Clear(void *outDest, Size inSize);
-	static void Fill8(void *outDest, Size inSize, uint8 inByte);
-	static void Fill16(void *outDest, Size inSize, uint16 inWord);
-	static void Fill32(void *outDest, Size inSize, uint32 inLong);
+	static void FillByte(void *outDest, Size inSize, uint8 inByte);
+	static void FillLong(void *outDest, Size inSize, uint32 inLong);
+	static void FillWord(void *outDest, Size inSize, uint16 inWord);
 	static Size Move(void *ioDest, const void *inSrc, Size inSize);
 
 	static void Fill(void *outDest, Size inSize, uint8 inByte)
 	{
-		Fill8(outDest, inSize, inByte);
+		FillByte(outDest, inSize, inByte);
 	}
 };
 

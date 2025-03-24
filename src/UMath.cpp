@@ -1,5 +1,7 @@
+#include "../include/GrafTypes.hpp"
 #include "../include/UApplication.hpp"
 #include "../include/UMath.hpp"
+#include "../include/UMemory.hpp"
 
 #include <math.h>
 
@@ -45,7 +47,7 @@ fast_float UMath::Cosine(fast_float x)
 uint32 UMath::GetRandom()
 {
 	uint8 *buf = UApplication::GetStateBuffer();
-	uint32 hash = Calculate(buf, 256, CalcRandomSeed());
+	uint32 hash = UMemory::Checksum(buf, 256, CalcRandomSeed());
 	
 	if (!_gRandomSeed) _gRandomSeed = hash;
 	_gRandomSeed = _gRandomSeed * 0x41C64E6D + 12345;
