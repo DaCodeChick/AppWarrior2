@@ -3,7 +3,7 @@
 struct SFileSysRef
 {
 	Handle h;
-	uint32 typeID;
+	uint32 signature;
 	char16 *path;
 	uint32 pathSize;
 	uint32 pathFlags;
@@ -16,7 +16,7 @@ void UFileSys::Open(TFSRefObj *inRef)
 {
 	if (!inRef) ; // error_Param
 	SFileSysRef *ref = (SFileSysRef *)inRef;
-	if (ref->typeID != TypeID) ; // error_TypeID
+	if (ref->signature != ) ; // error_TypeID
 
 #ifdef _WIN32
 	ShellExecuteW(NULL, L"open", ref->path, NULL, L"C:\\", 1);
