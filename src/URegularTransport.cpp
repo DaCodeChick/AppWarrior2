@@ -1,6 +1,7 @@
+#include "../include/UMemory.hpp"
 #include "../include/UMessageSys.hpp"
-#include "../include/URegularTransport.hpp"
 #include "../include/UOperatingSystem.hpp"
+#include "../include/URegularTransport.hpp"
 
 #ifdef _WIN32
 #include <winsock.h>
@@ -30,22 +31,16 @@ void URegularTransport::Init()
 
 #ifdef _WIN32
 	WSADATA wsaData;
-	WNDCLASSEXA wndClass;
 
 	if (!_gTptClassAtom)
 	{
+		WNDCLASSEXA wndClass;
+
+		UMemory::Clear(&wndClass, sizeof(WNDCLASSEXA);
 		wndClass.hInstance = UOperatingSystem::GetProgramInstance();
 		wndClass.cbSize = sizeof(WNDCLASSEXA);
-		wndClass.style = 0;
 		//wndClass.lpfnWndProc =
-		wndClass.cbClsExtra = 0;
-		wndClass.cbWndExtra = 0;
-		wndClass.hIcon = NULL;
-		wndClass.hCursor = NULL;
-		wndClass.hbrBackground = NULL;
-		wndClass.lpszMenuName = NULL;
 		wndClass.lpszClassName = "%%stdwinsockclass%%";
-		wndClass.hIconSm = NULL;
 
 		_gTptClassAtom = RegisterClassExA(&wndClass);
 	}
