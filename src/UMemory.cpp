@@ -20,6 +20,30 @@ static HANDLE _gHeap = NULL;
 #endif // _WIN32
 
 
+uint32 UMemory::Checksum(const void *inData, Size inDataSize, uint32 inInit)
+{
+	#define PRIME 0x1000193
+
+	const uint8 *dp = CBPTR(inData);
+
+	while (inDataSize && (ADDR_CAST(inData) & 3U))
+	{
+		inInit = inInit * PRIME ^ *dp++; 
+		inDataSize--;
+	}
+
+	const uint32 *dp32 = CIPTR(inData);
+	for (; inDataSize >= 4; inDataSize -= 4)
+		inInit = inInit * PRIME ^ swap_int(*dp32++);
+	
+	dp = CBPTR(dp32);
+	while (inDataSize--)
+		inInit = inInit * PRIME ^ *dp++;
+	
+	return inInit;
+}
+
+
 void UMemory::Clear(void *outDest, Size inSize)
 {
 #ifdef _MACINTOSH
@@ -153,10 +177,13 @@ void UMemory::Dispose(TPtr inPtr)
 }
 
 
-void UMemory::Fill(void *outDest, Size inSize, uint8 inByte)
+void UMemory::Fill8(void *outDest, Size inSize, uint8 inByte)
 {
+#ifdef _MACINTOSH
+#else
 	// fallback to memset as it is highly optimised
 	memset(outDest, inByte, inSize);
+#endif
 }
 
 

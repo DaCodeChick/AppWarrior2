@@ -24,7 +24,7 @@ unsigned char * pstrchr(const unsigned char *str, int c)
 #ifdef _MACINTOSH
 	return (unsigned char *)PLstrchr(str, (short)c);
 #else
-	return (unsigned char *)strchr((const char *)&str[1], c);
+	return (unsigned char *)memchr(&str[1], c, str[0]);
 #endif
 }
 
@@ -34,7 +34,8 @@ int pstrcmp(const unsigned char *str1, const unsigned char *str2)
 #ifdef _MACINTOSH
 	return PLstrcmp(str1, str2);
 #else
-	return strncmp((const char *)&str1[1], (const char *)&str2[1], 255);
+	int minsize = min(str1[0], str2[0]);
+	return strncmp((const char *)&str1[1], (const char *)&str2[1], minsize);
 #endif
 }
 
@@ -68,6 +69,14 @@ unsigned char * pstrrchr(const unsigned char *str, int c)
 #ifdef _MACINTOSH
 	return (unsigned char *)PLstrrchr(str, (short)c);
 #else
-	return (unsigned char *)strrchr((const char *)&str[1], c);
+#endif
+}
+
+
+HXAPI void pstrrev(unsigned char *str)
+{
+#ifdef _MACINTOSH
+#elif defined(_WIN32)
+#else
 #endif
 }

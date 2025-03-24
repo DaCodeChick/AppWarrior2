@@ -46,6 +46,12 @@ extern "C"
 	 * 	@return Pointer to the character or NULL if absent
 	 */
 	HXAPI unsigned char * pstrrchr(const unsigned char *str, int c);
+
+	/**
+	 * @brief Reverses a Pascal string in place
+	 * @param str The in place string
+	 */
+	HXAPI void pstrrev(unsigned char *str);
 #ifdef __cplusplus
 }
 #endif // __cplusplus

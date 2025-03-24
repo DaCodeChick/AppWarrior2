@@ -3,8 +3,9 @@
 
 #include <math.h>
 
-#ifndef _WIN32
+#ifndef _WIN32 && !defined(_MACINTOSH)
 #include <sys/time.h>
+#else
 #endif // _WIN32
 
 static uint8 _gIndex;
@@ -32,30 +33,6 @@ uint32 UMath::CalcRandomSeed()
 	gettimeofday(&tv, &tz);
 	return tv.tv_usec;
 #endif // _WIN32
-}
-
-
-uint32 UMath::Calculate(const void *inData, Size inDataSize, uint32 inInit)
-{
-	#define PRIME 0x1000193
-
-	const uint8 *dp = CBPTR(inData);
-
-	while (inDataSize && (ADDR_CAST(inData) & 3U))
-	{
-		inInit = inInit * PRIME ^ *dp++; 
-		inDataSize--;
-	}
-
-	const uint32 *dp32 = CIPTR(inData);
-	for (; inDataSize >= 4; inDataSize -= 4)
-		inInit = inInit * PRIME ^ swap_int(*dp32++);
-	
-	dp = CBPTR(dp32);
-	while (inDataSize--)
-		inInit = inInit * PRIME ^ *dp++;
-	
-	return inInit;
 }
 
 
