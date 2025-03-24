@@ -3,6 +3,7 @@ set (AW_SOURCES
 	ANSI.c
 	GrafTypes.cpp
 	UApplication.cpp
+	UCryptTransact.cpp
 	UDateTime.cpp
 	UDigest.cpp
 	UError.cpp
