@@ -87,16 +87,8 @@ typedef wchar_t char16;
 
 typedef double fast_float;
 
-
-#ifdef BITS_64
-#define PTR_ALIGN 8
-#define PTR_ALIGN_MASK 7
-#else
-#define PTR_ALIGN 4
-#define PTR_ALIGN_MASK 3
-#endif // BITS_64
-
-
+#define PTR_ALIGN sizeof(void *)
+#define PTR_ALIGN_MASK (PTR_ALIGN - 1)
 #define FORCE_CAST(t, d) (*(t *)&(d)) 
 #define ADDR_CAST(p) ((uintptr)p)
 #define BPTR(p) ((uint8 *)p)
@@ -106,7 +98,8 @@ typedef double fast_float;
 #define IPTR(p) ((uint32 *)p)
 #define CIPTR(p) ((const uint32 *)p)
 
-#ifndef max
+#ifdef max
+#undef max
 template <class T> inline T max(T a, T b)
 {
 	return (a < b) ? b : a;
@@ -114,7 +107,8 @@ template <class T> inline T max(T a, T b)
 #endif // max
 
 
-#ifndef min
+#ifdef min
+#undef min
 template <class T> inline T min(T a, T b)
 {
 	return (b < a) ? b : a;

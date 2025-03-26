@@ -3,8 +3,6 @@
 
 #ifdef _MACINTOSH
 #include <MacMemory.h>
-#else
-#include <cstring>
 #endif // _MACINTOSH
 
 #ifndef _WIN32 || !defined(_MACINTOSH)
@@ -49,8 +47,7 @@ void UMemory::Clear(void *outDest, Size inSize)
 #ifdef _MACINTOSH
 	BlockZero(outDest, inSize);
 #else
-	Fill(outDest, 0, inSize);
-#endif // _MACINTOSH
+#endif
 }
 
 
@@ -160,6 +157,7 @@ void UMemory::Dispose(THdl inHdl)
 #ifdef _WIN32
 	if (inHdl) GlobalFree((HGLOBAL)inHdl);
 #elif defined(_MACINTOSH)
+	if (*inHdl) DisposePtr(*(Ptr)inHdl);
 #else
 	if (*inHdl) free(*inHdl);
 #endif // _WIN32
@@ -169,23 +167,134 @@ void UMemory::Dispose(THdl inHdl)
 
 void UMemory::Dispose(TPtr inPtr)
 {
-#ifdef _WIN32
 	if (!_gInitialized && !inPtr) return;
-	HeapFree(_gHeap, 0, inPtr);
+	if (inPtr)
+#ifdef _WIN32
+		HeapFree(_gHeap, 0, inPtr);
 #elif defined(_MACINTOSH)
+		DisposePtr((Ptr)inPtr);
 #else
-	if (inPtr) free(inPtr);
+		free(inPtr);
 #endif // _WIN32
 }
 
 
 void UMemory::FillByte(void *outDest, Size inSize, uint8 inByte)
 {
-#ifdef _MACINTOSH
+	if (!inSize || !outDest) return;
+
+	uint32 pat32 = inByte;
+	pat32 |= pat32 << 8;
+	pat32 |= pat32 << 16;
+
+#ifdef BITS_64
+	uint64 pat64 = pat32;
+	pat64 |= pat64 << 32;
+#endif // BITS_64
+
+	if (inSize < PTR_ALIGN)
+	{
+		uint8 *dest = BPTR(outDest);
+		while (inSize--)
+			*dest++ = inByte;
+		return;
+	}
+
+	uintptr misalign = ADDR_CAST(outDest) & PTR_ALIGN_MASK;
+	if (misalign)
+	{
+		uint8 *dest = BPTR(outDest);
+		uintptr adjust = PTR_ALIGN - misalign;
+
+		while (misalign++ < PTR_ALIGN && inSize--)
+			*dest++ = inByte;
+		outDest = dest;
+	}
+
+	uintptr *dp = (uintptr *)outDest;
+#ifdef BITS_64
+	Size count = inSize >> 3;
 #else
-	// fallback to memset as it is highly optimised
-	memset(outDest, inByte, inSize);
+	Size count = inSize >> 2;
+#endif // BIT_64
+	while (count--)
+#ifdef BITS_64
+		*dp++ = pat64;
+#else
+		*dp++ = pat32;
+#endif // BIT_64
+
+	uint8 *rp = BPTR(dp);
+	Size remain = inSize & PTR_ALIGN_MASK;
+	while (remain--)
+		*rp++ = inByte;
+}
+
+
+void UMemory::FillWord(void *outDest, Size inSize, uint16 inWord)
+{
+	if (!inSize || !outDest) return;
+
+	const uint32 pat32 = inWord | (inWord << 16);
+#ifdef BITS_64
+	const uint64 pat64 = pat32 | (pat32 << 32);
+#endif // BITS_64
+
+	uint8 *bp = BPTR(outDest);
+	if (inSize == 1)
+	{
+		*bp = (uint8)inWord;
+		return;
+	}
+
+	// initial misalignment
+	if (ADDR_CAST(bp) & 1)
+	{
+		*bp++ = (uint8)inWord;
+		if (!--inSize) return;
+	}
+
+	uint16 *wp = WPTR(outDest);
+	const Size count = inSize >> 1;
+
+	if (count >= PTR_ALIGN)
+	{
+		const uintptr misalign = ADDR_CAST(wp) & PTR_ALIGN_MASK;
+		
+		if (misalign)
+		{
+			const uintptr adjust = (PTR_ALIGN - misalign) >> 1;
+			const Size init = min(adjust, count);
+
+			for (uintptr i = 0; i < init; ++i)
+				*wp++ = inWord;
+			inSize -= init << 1;
+			if (!inSize) return;
+		}
+
+		uintptr *waddr = (uintptr *)wp;
+		const Size words = (inSize >> 1) >> (PTR_ALIGN >> 1);
+#ifdef BITS_32
+		const uintptr pat = pat32;
+#else
+		const uintptr pat = pat64;
 #endif
+		for (Size i = 0; i < words; ++i)
+			*waddr++ = pat;
+		
+		wp = WPTR(waddr);
+		const Size rem = inSize >> 1;
+
+		for (Size i = 0; i < rem; ++i)
+			*wp++ = inWord;
+		
+		// remaining misaligned byte
+		if (inSize & 1)
+		{
+			bp = BPTR(wp);
+			*bp = (uint8)inWord;
+		}
+	}
 }
 
 
@@ -200,12 +309,12 @@ void UMemory::Init()
 
 Size UMemory::Move(void *ioDest, const void *inSrc, Size inSize)
 {
-#ifdef _MACINTOSH
+#ifdef _WIN32
+#elif defined(_MACINTOSH)
 	BlockMoveData(inSrc, ioDest, inSize);
 #else
-	// memmove is highly optimised, more so than the original Move
 	memmove(ioDest, inSrc, inSize);
-#endif // _MACINTOSH
+#endif
 	return inSize;
 }
 
@@ -216,6 +325,7 @@ TPtr UMemory::New(Size inSize)
 #ifdef _WIN32
 	HANDLE p = HeapAlloc(_gHeap, 0, inSize);
 #elif defined(_MACINTOSH)
+	Ptr p = NewPtr(inSize);
 #else
 	void *p = malloc(inSize);
 #endif // _WIN32
@@ -230,12 +340,11 @@ TPtr UMemory::NewClear(Size inSize)
 #ifdef _WIN32
 	HANDLE p = HeapAlloc(_gHeap, HEAP_ZERO_MEMORY, inSize);
 #elif defined(_MACINTOSH)
+	Ptr p = NewPtrClear(inSize);
 #else
 	void *p = malloc(inSize);
-#endif // _WIN32
 	if (!p) ; // memoryError_NotEnough
-#ifndef _WIN32
-	Clear(p, inSize);
+		Clear(p, inSize);
 #endif // _WIN32
 	return (TPtr)p;
 }

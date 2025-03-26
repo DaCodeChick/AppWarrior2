@@ -28,7 +28,7 @@ struct HXAPI SRect
 #ifdef _WIN32
 	operator RECT()
 	{
-		return *(RECT *)this;
+		return *(LPRECT)this;
 	}
 #endif // _WIN32
 };
