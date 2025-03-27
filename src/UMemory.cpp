@@ -179,17 +179,13 @@ void UMemory::Dispose(TPtr inPtr)
 }
 
 
-void UMemory::FillByte(void *outDest, Size inSize, uint8 inByte)
+void UMemory::Fill(void *outDest, Size inSize, uint8 inByte)
 {
 	if (!inSize || !outDest) return;
 
-	uint32 pat32 = inByte;
-	pat32 |= pat32 << 8;
-	pat32 |= pat32 << 16;
-
+	const uint32 pat32 = inByte | (inByte << 8) | (inByte << 16) | (inByte << 24);
 #ifdef BITS_64
-	uint64 pat64 = pat32;
-	pat64 |= pat64 << 32;
+	uint64 pat64 = pat32 | (pat32 << 32);
 #endif // BITS_64
 
 	if (inSize < PTR_ALIGN)
@@ -211,7 +207,7 @@ void UMemory::FillByte(void *outDest, Size inSize, uint8 inByte)
 		outDest = dest;
 	}
 
-	uintptr *dp = (uintptr *)outDest;
+	uintptr *baddr = (uintptr *)outDest;
 #ifdef BITS_64
 	Size count = inSize >> 3;
 #else
@@ -219,19 +215,19 @@ void UMemory::FillByte(void *outDest, Size inSize, uint8 inByte)
 #endif // BIT_64
 	while (count--)
 #ifdef BITS_64
-		*dp++ = pat64;
+		*baddr++ = pat64;
 #else
-		*dp++ = pat32;
+		*baddr++ = pat32;
 #endif // BIT_64
 
-	uint8 *rp = BPTR(dp);
+	uint8 *rp = BPTR(baddr);
 	Size remain = inSize & PTR_ALIGN_MASK;
 	while (remain--)
 		*rp++ = inByte;
 }
 
 
-void UMemory::FillWord(void *outDest, Size inSize, uint16 inWord)
+void UMemory::Fill(void *outDest, Size inSize, uint16 inWord)
 {
 	if (!inSize || !outDest) return;
 
@@ -243,18 +239,11 @@ void UMemory::FillWord(void *outDest, Size inSize, uint16 inWord)
 	uint8 *bp = BPTR(outDest);
 	if (inSize == 1)
 	{
-		*bp = (uint8)inWord;
+		*bp = (uint8)(inWord & 255);
 		return;
 	}
 
-	// initial misalignment
-	if (ADDR_CAST(bp) & 1)
-	{
-		*bp++ = (uint8)inWord;
-		if (!--inSize) return;
-	}
-
-	uint16 *wp = WPTR(outDest);
+	uint16 *wp = WPTR(bp);
 	const Size count = inSize >> 1;
 
 	if (count >= PTR_ALIGN)
@@ -292,9 +281,84 @@ void UMemory::FillWord(void *outDest, Size inSize, uint16 inWord)
 		if (inSize & 1)
 		{
 			bp = BPTR(wp);
-			*bp = (uint8)inWord;
+			*bp = (uint8)(inWord & 255);
 		}
 	}
+}
+
+
+void UMemory::Fill(void *outDest, Size inSize, uint32 inLong)
+{
+	if (!inSize || !outDest) return;
+
+#ifdef BITS_64
+	const uint64 pat64 = inLong | (inLong << 32);
+#endif // BITS_64
+	uint8 *bp = BPTR(outDest);
+	if (inSize == 1)
+	{
+		*bp = (uint8)(inLong & 255);
+		return;
+	}
+
+	uint16 *wp = WPTR(bp);
+	if (inSize == 2)
+	{
+		*wp = (uint16)(inLong & 65535);
+		return;
+	}
+
+	if (inSize == 3)
+	{
+		*wp = (uint16)(inLong & 65535);
+		bp = BPTR(wp);
+		*bp = (uint8)((inLong & 0xFF0000) >> 16);
+		return;
+	}
+
+	uint32 *lp = IPTR(outDest);
+	const Size count = inSize >> 1;
+
+	if (count >= PTR_ALIGN)
+	{
+		const uintptr misalign = ADDR_CAST(lp) & PTR_ALIGN_MASK;
+		
+		if (misalign)
+		{
+			const uintptr adjust = (PTR_ALIGN - misalign) >> 1;
+			const Size init = min(adjust, count);
+
+			for (uintptr i = 0; i < init; ++i)
+				*lp++ = inLong;
+			inSize -= init << 1;
+			if (!inSize) return;
+		}
+
+		uintptr *laddr = (uintptr *)lp;
+		const Size longs = (inSize >> 2) >> (PTR_ALIGN >> 1);
+#ifdef BITS_32
+		const uintptr pat = inLong;
+#else
+		const uintptr pat = pat64;
+#endif
+		for (Size i = 0; i < longs; ++i)
+			*laddr++ = pat;
+		
+		lp = IPTR(laddr);
+		const Size rem = inSize >> 1;
+
+		for (Size i = 0; i < rem; ++i)
+			*lp++ = inLong;
+		
+		wp = WPTR(lp);
+		// remaining misaligned word
+		if (inSize == 2)
+			*wp = (uint16)(inLong & 65535);
+		
+		bp = BPTR(wp);
+		// remaining misaligned byte
+		if (inSize & 1)
+			*bp = (uint8)((inLong & 0xFF0000) >> 16);
 }
 
 

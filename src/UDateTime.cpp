@@ -20,14 +20,14 @@ uint32 UDateTime::GetMilliseconds()
 }
 
 
-uint64 UDateTime::GetMilliseconds64()
+uint64 UDateTime::GetMilliseconds()
 {
 #ifdef _WIN32
 	FILETIME ft;
 
 	GetSystemTimeAsFileTime(&ft);
 
-	return m64 - _EPOCH;
+	return FORCE_CAST(uint64, ft) - _EPOCH;
 #elif defined(_MACINTOSH)
 #else
 #endif

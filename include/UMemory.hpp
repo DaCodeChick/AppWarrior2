@@ -26,15 +26,10 @@ public:
 	static uint32 CRC(const void *inData, Size inDataSize, uint32 inInit);
 
 	static void Clear(void *outDest, Size inSize);
-	static void FillByte(void *outDest, Size inSize, uint8 inByte);
-	static void FillLong(void *outDest, Size inSize, uint32 inLong);
-	static void FillWord(void *outDest, Size inSize, uint16 inWord);
+	static void Fill(void *outDest, Size inSize, uint8 inByte);
+	static void Fill(void *outDest, Size inSize, uint32 inLong);
+	static void Fill(void *outDest, Size inSize, uint16 inWord);
 	static Size Move(void *ioDest, const void *inSrc, Size inSize);
-
-	static void Fill(void *outDest, Size inSize, uint8 inByte)
-	{
-		FillByte(outDest, inSize, inByte);
-	}
 };
 
 

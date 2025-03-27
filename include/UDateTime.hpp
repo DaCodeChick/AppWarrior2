@@ -38,7 +38,7 @@ class HXAPI UDateTime
 {
 public:
 	static uint32 GetMilliseconds();
-	static uint64 GetMilliseconds64();
+	static uint64 GetMilliseconds();
 	static int32 GetTimeZoneDelta();
 };
 
