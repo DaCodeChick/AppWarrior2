@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 typedef class TTimerObj *TTimer;
 
@@ -21,3 +22,5 @@ public:
 		UTimer::Dispose((TTimer)p);
 	}
 };
+
+#include "_mwexpoff.h"

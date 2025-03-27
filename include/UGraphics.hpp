@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GrafTypes.hpp"
+#include "_mwexpon.h"
 
 
 struct SFontDesc
@@ -23,3 +24,5 @@ public:
 
 	static void ComputeBoundingBox(SRect &inRect, uint32 inRadius, SBoundingBox &outBB);
 };
+
+#include "_mwexpoff.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GrafTypes.hpp"
+#include "_mwexpon.h"
 
 class HXAPI UMouse
 {
@@ -11,3 +12,5 @@ public:
 	static uint32 GetDoubleClickTime();
 	static void GetLocation(SPoint &outLoc);
 };
+
+#include "_mwexpoff.h"

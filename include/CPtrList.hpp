@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 class HXAPI CVoidPtrList
 {
@@ -13,3 +14,5 @@ protected:
 	int mOffset;
 	uint32 mCount;
 };
+
+#include "_mwexpoff.h"

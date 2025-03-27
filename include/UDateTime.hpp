@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 enum
 {
@@ -40,3 +41,5 @@ public:
 	static uint64 GetMilliseconds64();
 	static int32 GetTimeZoneDelta();
 };
+
+#include "_mwexpoff.h"

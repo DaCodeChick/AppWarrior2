@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 /** @brief Error */
 struct SError
@@ -17,6 +18,7 @@ public:
 	static uint32 WinToGenError(DWORD inWinError);
 #else
 	static uint32 StdToGenError(int inError);
+#endif
 };
 
 
@@ -26,3 +28,5 @@ enum
 	error_Signature = 0x10019,
 	error_Unknown = 0x1001B
 };
+
+#include "_mwexpoff.h"

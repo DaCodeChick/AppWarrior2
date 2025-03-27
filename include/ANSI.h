@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -55,3 +56,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif // __cplusplus
+
+#include "_mwexpoff.h"

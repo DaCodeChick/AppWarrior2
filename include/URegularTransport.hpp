@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 enum
 {
@@ -21,3 +22,5 @@ public:
 	static void Init();
 	static void Deinit();
 };
+
+#include "_mwexpoff.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 #define LL_HIGHPART(x) ((uint64)(x) >> 32)
 #define LL_LOWPART(x) ((uint64)(x) % 0xFFFFFFFFULL)
@@ -21,3 +22,5 @@ public:
 	static fast_float Sine(fast_float x);
 	static fast_float SquareRoot(fast_float x);
 };
+
+#include "_mwexpoff.h"

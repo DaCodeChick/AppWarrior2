@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 typedef class TMessageSysObj *TMessageSys;
 
@@ -27,3 +28,5 @@ protected:
 	{
 	}
 };
+
+#include "_mwexpoff.h"

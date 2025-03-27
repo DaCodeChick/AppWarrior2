@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 typedef class TPtrObj *TPtr;
 typedef class THdlObj *THdl;
@@ -70,3 +71,5 @@ protected:
 	{
 	}
 };
+
+#include "_mwexpoff.h"

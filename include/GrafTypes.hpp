@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 
 /** @brief Point */
@@ -36,3 +37,5 @@ struct HXAPI SRect
 
 const fast_float gm_2Pi = 6.283185307179586;
 const fast_float gm_Pi = 3.141592653589793;
+
+#include "_mwexpoff.h"

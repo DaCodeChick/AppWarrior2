@@ -32,6 +32,7 @@ documentation and/or software.
 */
 
 #include "../typedefs.hpp"
+#include "../_mwexpon.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,3 +61,5 @@ HXAPI void MD5Final(unsigned char [16], MD5_CTX *);
 #ifdef __cplusplus
 }
 #endif // __cplusplus
+
+#include "../_mwexpoff.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefs.hpp"
+#include "_mwexpon.h"
 
 struct SAppearance
 {
@@ -34,3 +35,5 @@ class HXAPI UUserInterface
 public:
 	static SAppearance * NewAppearance();
 };
+
+#include "_mwexpoff.h"
