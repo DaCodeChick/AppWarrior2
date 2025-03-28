@@ -394,7 +394,7 @@ void UMemory::Fill(void *outDest, Size inSize, uint32 inLong)
 		
 		wp = WPTR(lp);
 		// remaining misaligned word
-		if (inSize == 2)
+		if (inSize & 2)
 			*wp = (uint16)(inLong & 65535);
 		
 		bp = BPTR(wp);
