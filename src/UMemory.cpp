@@ -74,10 +74,10 @@ void UMemory::Clear(void *outDest, Size inSize)
 		p = BPTR(zp);
 	}
 
-	for (; inSize > 2; inSize -= 4)
+	for (Size i = 32; i > 2; i >>= 1)
 	{
-		Fill(p, sizeof(uint32), (uint32)0);
-		p += 4;
+		Fill(p, inSize & i, (uint32)0);
+		p += i;
 	}
 	if (inSize & 2)
 	{
