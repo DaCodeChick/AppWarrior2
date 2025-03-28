@@ -14,7 +14,7 @@ public:
 	static uint32 Calculate(const void *inData, Size inDataSize, uint32 inInit);
 	static uint32 GetRandom();
 
-	static uint64 Div64U(uint64 inA, uint64 inB, uint64 *outRemainder);
+	static uint64 Div64U(uint64 inNumerator, uint64 inDenominator, uint64 *outRemainder);
 
 	static fast_float ArcTangent(fast_float x);
 	static fast_float Cosine(fast_float x);
@@ -22,9 +22,9 @@ public:
 	static fast_float Sine(fast_float x);
 	static fast_float SquareRoot(fast_float x);
 
-	static uint64 Div64U(uint64 inA, uint64 inB)
+	static uint64 Div64U(uint64 inNumerator, uint64 inDenominator)
 	{
-		return Div64U(inA, inB, NULL);
+		return Div64U(inNumerator, inDenominator, NULL);
 	}
 };
 

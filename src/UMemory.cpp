@@ -200,6 +200,7 @@ void UMemory::Dispose(THdl inHdl)
 #else
 	if (*inHdl) free(*inHdl);
 #endif // _WIN32
+	inHdl = NULL;
 	_gAllocCount--;
 }
 
@@ -215,6 +216,8 @@ void UMemory::Dispose(TPtr inPtr)
 #else
 		free(inPtr);
 #endif // _WIN32
+	inPtr = NULL;
+	_gAllocCount--;
 }
 
 
@@ -433,6 +436,8 @@ TPtr UMemory::New(Size inSize)
 	void *p = malloc(inSize);
 #endif // _WIN32
 	if (!p) ; // memoryError_NotEnough
+	_gAllocCount++;
+
 	return (TPtr)p;
 }
 
@@ -449,6 +454,8 @@ TPtr UMemory::NewClear(Size inSize)
 	if (!p) ; // memoryError_NotEnough
 		Clear(p, inSize);
 #endif // _WIN32
+	_gAllocCount++;
+
 	return (TPtr)p;
 }
 
@@ -478,4 +485,46 @@ THdl UMemory::NewHandleClear(Size inSize)
 	if (!h) ; // memoryError_NotEnough
 	_gAllocCount++;
 	return (THdl)h;
+}
+
+
+TPtr UMemory::Reallocate(TPtr inPtr, uint32 inSize)
+{
+#ifdef _WIN32
+#elif defined(_MACINTOSH)
+#else
+	void *p;
+#endif // _WIN32
+
+	if (!inPtr)
+	{
+#ifdef _WIN32
+#elif defined(_MACINTOSH)
+#else
+		p = malloc(inSize);
+#endif // _WIN32
+		if (!p) ; // memoryError_NotEnough
+		_gAllocCount++;
+	}
+	else if (!inSize)
+	{
+#ifdef _WIN32
+#elif defined(_MACINTOSH)
+#else
+		free(p);
+#endif // _WIN32
+		p = NULL;
+		_gAllocCount--;
+	}
+	else
+	{
+#ifdef _WIN32
+#elif defined(_MACINTOSH)
+#else
+		p = realloc(inSize);
+#endif // _WIN32
+		if (!p) ; // memoryError_NotEnough
+	}
+
+	return (TPtr)p;
 }

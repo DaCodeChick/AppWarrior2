@@ -7,7 +7,6 @@
 
 #ifndef _WIN32 && !defined(_MACINTOSH)
 #include <sys/time.h>
-#else
 #endif // _WIN32
 
 static uint8 _gIndex;
@@ -28,6 +27,14 @@ uint32 UMath::CalcRandomSeed()
 	GetSystemTimeAsFileTime(&ft);
 	return ft.dwLowDateTime;
 #elif defined(_MACINTOSH)
+	uint32 tbl;
+
+	asm
+	{
+		mftb tbl, TBLr
+	}
+
+	return tbl;
 #else // _WIN32
 	struct timeval tv;
 	struct timezone tz;
@@ -56,6 +63,40 @@ uint32 UMath::GetRandom()
 	_gIndex = hash & 63;
 
 	return hash;
+}
+
+
+uint64 UMath::Div64U(uint64 inNumerator, uint64 inDenominator, uint64 *outRemainder)
+{
+	uint32 hin = (uint32)(inNumerator >> 32);
+	uint32 lon = (uint32)inNumerator;
+	uint32 hid = (uint32)(inDenominator >> 32);
+	uint32 lod = (uint32)inDenominator;
+	uint32 hiq = 0, loq = 0, hir = 0, lor = 0;
+
+	// if the denom. is 32-bit (high is zero)
+	if (!hid)
+	{
+		if (hin < lod)
+		{
+			loq = (uint32)(inNumerator / lod);
+			lor = (uint32)(inNumerator % lod);
+		}
+		else
+		{
+			if (!lod)
+				lod = (uint32)(1 / 0); // undefined behavior
+			
+			uint64 inter = ((uint64)(hin % lod) << 32) | lon;
+
+			hiq = hin / lod;
+			loq = (uint32)(inter / lod);
+			lor = (uint32)(inter % lod);
+		}
+
+		if (outRemainder)
+			*outRemainder = (uint64)lor;
+	}
 }
 
 

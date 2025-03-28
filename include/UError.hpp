@@ -25,7 +25,8 @@ public:
 enum
 {
 	error_Param = 0x10002,
-	error_Signature = 0x10019,
+	error_Unimplemented = 0x10004,
+	error_Integrity = 0x10019,
 	error_Unknown = 0x1001B
 };
 

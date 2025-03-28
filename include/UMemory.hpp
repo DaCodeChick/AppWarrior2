@@ -15,6 +15,7 @@ public:
 	static void Dispose(TPtr inPtr);
 	static TPtr New(Size inSize);
 	static TPtr NewClear(Size inSize);
+	static TPtr Reallocate(TPtr inPtr, uint32 inSize);
 
 	static void Dispose(THdl inHdl);
 	static THdl NewHandle(Size inSize);
