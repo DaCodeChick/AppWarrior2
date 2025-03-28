@@ -30,7 +30,7 @@ uint32 UMemory::Checksum(const void *inData, Size inDataSize, uint32 inInit)
 		inDataSize--;
 	}
 
-	const uint32 *dp32 = CIPTR(inData);
+	const uint32 *dp32 = CDPTR(inData);
 	for (; inDataSize >= 4; inDataSize -= 4)
 		inInit = inInit * PRIME ^ swap_int(*dp32++);
 	
@@ -44,9 +44,48 @@ uint32 UMemory::Checksum(const void *inData, Size inDataSize, uint32 inInit)
 
 void UMemory::Clear(void *outDest, Size inSize)
 {
+	if (!outDest || !inSize) return;
 #ifdef _MACINTOSH
 	BlockZero(outDest, inSize);
 #else
+	uint8 *p = BPTR(outDest);
+	const uintptr misalign = ADDR_CAST(p) & PTR_BITMASK;
+
+	if (misalign)
+	{
+		const Size adjust = PTR_BITS - misalign;
+		const Size init = min(adjust, inSize);
+		Fill(p, 0, (uint8)init);
+		p += init;
+		inSize -= init;
+	}
+
+	if (inSize >= PTR_BITS)
+	{
+		const Size chunks = inSize >> PTR_BITS;
+		inSize &= PTR_BITMASK;
+		Size *zp = ZPTR(p);
+
+		for (Size i = 0; i < chunks; ++i)
+		{
+			for (Size j = 0; j < PTR_ALIGN; ++j)
+				zp[j] = 0;
+		}
+		p = BPTR(zp);
+	}
+
+	for (; inSize > 2; inSize -= 4)
+	{
+		Fill(p, sizeof(uint32), (uint32)0);
+		p += 4;
+	}
+	if (inSize & 2)
+	{
+		Fill(p, sizeof(uint16), (uint16)0);
+		p += 2;
+	}
+	if (inSize & 1)
+		*p = 0;
 #endif
 }
 
@@ -141,7 +180,7 @@ uint32 UMemory::CRC(const void *inData, Size inDataSize, uint32 inInit)
 	for (Size i = 0; i < chunks; i++)
 		for (Size j = 0; j < 32; j += 8)
 			inInit = (inInit << 8) ^ ccitt32_crctab[(inInit >> 24) ^
-				((*CIPTR(dp) >> j) & 255)];
+				((*CDPTR(dp) >> j) & 255)];
 	
 	// remaining bytes
 	Size remain = inDataSize & 3;
@@ -316,7 +355,7 @@ void UMemory::Fill(void *outDest, Size inSize, uint32 inLong)
 		return;
 	}
 
-	uint32 *lp = IPTR(outDest);
+	uint32 *lp = DPTR(outDest);
 	const Size count = inSize >> 1;
 
 	if (count >= PTR_ALIGN)
@@ -344,7 +383,7 @@ void UMemory::Fill(void *outDest, Size inSize, uint32 inLong)
 		for (Size i = 0; i < longs; ++i)
 			*laddr++ = pat;
 		
-		lp = IPTR(laddr);
+		lp = DPTR(laddr);
 		const Size rem = inSize >> 1;
 
 		for (Size i = 0; i < rem; ++i)

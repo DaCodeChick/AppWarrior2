@@ -89,14 +89,18 @@ typedef double fast_float;
 
 #define PTR_ALIGN sizeof(void *)
 #define PTR_ALIGN_MASK (PTR_ALIGN - 1)
+#define PTR_BITS (PTR_ALIGN << 3)
+#define PTR_BITMASK (PTR_BITS - 1)
 #define FORCE_CAST(t, d) (*(t *)&(d)) 
 #define ADDR_CAST(p) ((uintptr)p)
 #define BPTR(p) ((uint8 *)p)
 #define CBPTR(p) ((const uint8 *)p)
 #define WPTR(p) ((uint16 *)p)
 #define CWPTR(p) ((const uint16 *)p)
-#define IPTR(p) ((uint32 *)p)
-#define CIPTR(p) ((const uint32 *)p)
+#define DPTR(p) ((uint32 *)p)
+#define CDPTR(p) ((const uint32 *)p)
+#define ZPTR(p) ((Size *)p)
+#define CZPTR(p) ((const Size *)p)
 
 #ifdef max
 #undef max
