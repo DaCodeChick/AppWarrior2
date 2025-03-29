@@ -415,8 +415,7 @@ void UMemory::Init()
 
 Size UMemory::Move(void *ioDest, const void *inSrc, Size inSize)
 {
-#ifdef _WIN32
-#elif defined(_MACINTOSH)
+#ifdef _MACINTOSH
 	BlockMoveData(inSrc, ioDest, inSize);
 #else
 	memmove(ioDest, inSrc, inSize);
